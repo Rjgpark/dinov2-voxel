@@ -251,8 +251,7 @@ Nvidia A100 GPUs
 
 #### Software
 
-PyTorch 2.0,
-xFormers 0.0.18
+PyTorch 2.3.1,
 
 **BibTeX**
 

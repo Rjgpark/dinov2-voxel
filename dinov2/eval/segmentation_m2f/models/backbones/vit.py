@@ -156,41 +156,6 @@ class Attention(nn.Module):
         return x
 
 
-class MemEffAttention(nn.Module):
-    def __init__(
-        self,
-        dim: int,
-        num_heads: int = 8,
-        qkv_bias: bool = False,
-        attn_drop: float = 0.0,
-        proj_drop: float = 0.0,
-    ) -> None:
-        super().__init__()
-        self.num_heads = num_heads
-        head_dim = dim // num_heads
-        self.scale = head_dim**-0.5
-
-        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
-        self.attn_drop = nn.Dropout(attn_drop)
-        self.proj = nn.Linear(dim, dim)
-        self.proj_drop = nn.Dropout(proj_drop)
-
-    def forward(self, x: Tensor, H, W) -> Tensor:
-        from xformers.ops import memory_efficient_attention, unbind
-
-        B, N, C = x.shape
-        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads)
-
-        q, k, v = unbind(qkv, 2)
-
-        x = memory_efficient_attention(q, k, v)
-        x = x.reshape([B, N, C])
-
-        x = self.proj(x)
-        x = self.proj_drop(x)
-        return x
-
-
 def window_partition(x, window_size):
     """
     Args:
@@ -334,7 +299,6 @@ class Block(nn.Module):
         layer_scale=False,
         with_cp=False,
         ffn_layer=Mlp,
-        memeff=False,
     ):
         super().__init__()
         self.with_cp = with_cp
@@ -348,10 +312,6 @@ class Block(nn.Module):
                 proj_drop=drop,
                 window_size=window_size,
                 pad_mode=pad_mode,
-            )
-        elif memeff:
-            self.attn = MemEffAttention(
-                dim, num_heads=num_heads, qkv_bias=qkv_bias, attn_drop=attn_drop, proj_drop=drop
             )
         else:
             self.attn = Attention(dim, num_heads=num_heads, qkv_bias=qkv_bias, attn_drop=attn_drop, proj_drop=drop)
@@ -417,7 +377,6 @@ class TIMMVisionTransformer(BaseModule):
         with_cp=False,
         pre_norm=False,
         ffn_type="mlp",
-        memeff=False,
     ):
         """
         Args:
@@ -484,7 +443,6 @@ class TIMMVisionTransformer(BaseModule):
                     layer_scale=layer_scale,
                     with_cp=with_cp,
                     ffn_layer=ffn_types[ffn_type],
-                    memeff=memeff,
                 )
                 for i in range(depth)
             ]
