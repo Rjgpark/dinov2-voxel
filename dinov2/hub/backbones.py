@@ -65,21 +65,21 @@ def dinov2_vits14_scriptable(*, pretrained: bool = True, weights: Union[Weights,
     """
     DINOv2 ViT-S/14 model (optionally) pretrained on the LVD-142M dataset.
     """
-    return _make_dinov2_model(arch_name="vit_small_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_model(arch_name="vit_small", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitb14_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.LVD142M, **kwargs):
     """
     DINOv2 ViT-B/14 model (optionally) pretrained on the LVD-142M dataset.
     """
-    return _make_dinov2_model(arch_name="vit_base_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_model(arch_name="vit_base", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitl14_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.LVD142M, **kwargs):
     """
     DINOv2 ViT-L/14 model (optionally) pretrained on the LVD-142M dataset.
     """
-    return _make_dinov2_model(arch_name="vit_large_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_model(arch_name="vit_large", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitg14_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.LVD142M, **kwargs):
@@ -87,7 +87,7 @@ def dinov2_vitg14_scriptable(*, pretrained: bool = True, weights: Union[Weights,
     DINOv2 ViT-g/14 model (optionally) pretrained on the LVD-142M dataset.
     """
     return _make_dinov2_model(
-        arch_name="vit_giant2_scriptable",
+        arch_name="vit_giant2",
         ffn_layer="swiglufused",
         weights=weights,
         pretrained=pretrained,
@@ -100,7 +100,7 @@ def dinov2_vits14_reg_scriptable(*, pretrained: bool = True, weights: Union[Weig
     DINOv2 ViT-S/14 model with registers (optionally) pretrained on the LVD-142M dataset.
     """
     return _make_dinov2_model(
-        arch_name="vit_small_scriptable",
+        arch_name="vit_small",
         pretrained=pretrained,
         weights=weights,
         num_register_tokens=4,
@@ -115,7 +115,7 @@ def dinov2_vitb14_reg_scriptable(*, pretrained: bool = True, weights: Union[Weig
     DINOv2 ViT-B/14 model with registers (optionally) pretrained on the LVD-142M dataset.
     """
     return _make_dinov2_model(
-        arch_name="vit_base_scriptable",
+        arch_name="vit_base",
         pretrained=pretrained,
         weights=weights,
         num_register_tokens=4,
@@ -130,7 +130,7 @@ def dinov2_vitl14_reg_scriptable(*, pretrained: bool = True, weights: Union[Weig
     DINOv2 ViT-L/14 model with registers (optionally) pretrained on the LVD-142M dataset.
     """
     return _make_dinov2_model(
-        arch_name="vit_large_scriptable",
+        arch_name="vit_large",
         pretrained=pretrained,
         weights=weights,
         num_register_tokens=4,
@@ -145,7 +145,7 @@ def dinov2_vitg14_reg_scriptable(*, pretrained: bool = True, weights: Union[Weig
     DINOv2 ViT-g/14 model with registers (optionally) pretrained on the LVD-142M dataset.
     """
     return _make_dinov2_model(
-        arch_name="vit_giant2_scriptable",
+        arch_name="vit_giant2",
         ffn_layer="swiglufused",
         weights=weights,
         pretrained=pretrained,

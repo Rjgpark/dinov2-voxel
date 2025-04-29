@@ -69,7 +69,7 @@ def _make_dinov2_linear_depth_head(
 
 def _make_dinov2_linear_depther(
     *,
-    arch_name: str = "vit_large_scriptable",
+    arch_name: str = "vit_large",
     layers: int = 4,
     pretrained: bool = True,
     weights: Union[Weights, str] = Weights.NYU,
@@ -101,18 +101,18 @@ def _make_dinov2_linear_depther(
     )
 
     layer_count = {
-        "vit_small_scriptable": 12,
-        "vit_base_scriptable": 12,
-        "vit_large_scriptable": 24,
-        "vit_giant2_scriptable": 40,
+        "vit_small": 12,
+        "vit_base": 12,
+        "vit_large": 24,
+        "vit_giant2": 40,
     }[arch_name]
 
     if layers == 4:
         out_index = {
-            "vit_small_scriptable": [2, 5, 8, 11],
-            "vit_base_scriptable": [2, 5, 8, 11],
-            "vit_large_scriptable": [4, 11, 17, 23],
-            "vit_giant2_scriptable": [9, 19, 29, 39],
+            "vit_small": [2, 5, 8, 11],
+            "vit_base": [2, 5, 8, 11],
+            "vit_large": [4, 11, 17, 23],
+            "vit_giant2": [9, 19, 29, 39],
         }[arch_name]
     else:
         assert layers == 1
@@ -142,25 +142,25 @@ def _make_dinov2_linear_depther(
 
 def dinov2_vits14_ld_scriptable(*, layers: int = 4, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
     return _make_dinov2_linear_depther(
-        arch_name="vit_small_scriptable", layers=layers, pretrained=pretrained, weights=weights, **kwargs
+        arch_name="vit_small", layers=layers, pretrained=pretrained, weights=weights, **kwargs
     )
 
 
 def dinov2_vitb14_ld_scriptable(*, layers: int = 4, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
     return _make_dinov2_linear_depther(
-        arch_name="vit_base_scriptable", layers=layers, pretrained=pretrained, weights=weights, **kwargs
+        arch_name="vit_base", layers=layers, pretrained=pretrained, weights=weights, **kwargs
     )
 
 
 def dinov2_vitl14_ld_scriptable(*, layers: int = 4, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
     return _make_dinov2_linear_depther(
-        arch_name="vit_large_scriptable", layers=layers, pretrained=pretrained, weights=weights, **kwargs
+        arch_name="vit_large", layers=layers, pretrained=pretrained, weights=weights, **kwargs
     )
 
 
 def dinov2_vitg14_ld_scriptable(*, layers: int = 4, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
     return _make_dinov2_linear_depther(
-        arch_name="vit_giant2_scriptable", layers=layers, ffn_layer="swiglufused", pretrained=pretrained, weights=weights, **kwargs
+        arch_name="vit_giant2", layers=layers, ffn_layer="swiglufused", pretrained=pretrained, weights=weights, **kwargs
     )
 
 
@@ -179,7 +179,7 @@ def _make_dinov2_dpt_depth_head(*, embed_dim: int, min_depth: float, max_depth: 
 
 def _make_dinov2_dpt_depther_scriptable(
     *,
-    arch_name: str = "vit_large_scriptable",
+    arch_name: str = "vit_large",
     pretrained: bool = True,
     weights: Union[Weights, str] = Weights.NYU,
     depth_range: Optional[Tuple[float, float]] = None,
@@ -201,10 +201,10 @@ def _make_dinov2_dpt_depther_scriptable(
     dpt_depth_head = _make_dinov2_dpt_depth_head(embed_dim=backbone.embed_dim, min_depth=min_depth, max_depth=max_depth)
 
     out_index = {
-        "vit_small_scriptable": [2, 5, 8, 11],
-        "vit_base_scriptable": [2, 5, 8, 11],
-        "vit_large_scriptable": [4, 11, 17, 23],
-        "vit_giant2_scriptable": [9, 19, 29, 39],
+        "vit_small": [2, 5, 8, 11],
+        "vit_base": [2, 5, 8, 11],
+        "vit_large": [4, 11, 17, 23],
+        "vit_giant2": [9, 19, 29, 39],
     }[arch_name]
 
     model = DepthEncoderDecoder(backbone=backbone, decode_head=dpt_depth_head)
@@ -229,18 +229,18 @@ def _make_dinov2_dpt_depther_scriptable(
 
 
 def dinov2_vits14_dd_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
-    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_small_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_small", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitb14_dd_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
-    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_base_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_base", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitl14_dd_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
-    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_large_scriptable", pretrained=pretrained, weights=weights, **kwargs)
+    return _make_dinov2_dpt_depther_scriptable(arch_name="vit_large", pretrained=pretrained, weights=weights, **kwargs)
 
 
 def dinov2_vitg14_dd_scriptable(*, pretrained: bool = True, weights: Union[Weights, str] = Weights.NYU, **kwargs):
     return _make_dinov2_dpt_depther_scriptable(
-        arch_name="vit_giant2_scriptable", ffn_layer="swiglufused", pretrained=pretrained, weights=weights, **kwargs
+        arch_name="vit_giant2", ffn_layer="swiglufused", pretrained=pretrained, weights=weights, **kwargs
     )
