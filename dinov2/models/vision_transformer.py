@@ -336,7 +336,7 @@ def init_weights_vit_timm(module: nn.Module, name: str = ""):
             nn.init.zeros_(module.bias)
 
 
-def vit_small_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
+def vit_small(patch_size=16, num_register_tokens=0, **kwargs):
     model = DinoVisionTransformer(
         patch_size=patch_size,
         embed_dim=384,
@@ -350,7 +350,7 @@ def vit_small_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
     return model
 
 
-def vit_base_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
+def vit_base(patch_size=16, num_register_tokens=0, **kwargs):
     model = DinoVisionTransformer(
         patch_size=patch_size,
         embed_dim=768,
@@ -364,7 +364,7 @@ def vit_base_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
     return model
 
 
-def vit_large_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
+def vit_large(patch_size=16, num_register_tokens=0, **kwargs):
     model = DinoVisionTransformer(
         patch_size=patch_size,
         embed_dim=1024,
@@ -378,7 +378,7 @@ def vit_large_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
     return model
 
 
-def vit_giant2_scriptable(patch_size=16, num_register_tokens=0, **kwargs):
+def vit_giant2(patch_size=16, num_register_tokens=0, **kwargs):
     """
     Close to ViT-giant, with embed-dim 1536 and 24 heads => embed-dim per head 64
     """
