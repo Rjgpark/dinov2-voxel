@@ -85,7 +85,7 @@ class _LinearClassifierWrapper(nn.Module):
 
 def _make_dinov2_linear_classifier(
     *,
-    arch_name: str = "vit_large_scriptable",
+    arch_name: str = "vit_large",
     layers: int = 4,
     pretrained: bool = True,
     weights: Union[Weights, str] = Weights.IMAGENET1K,
@@ -129,7 +129,7 @@ def dinov2_vits14_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-S/14 backbone (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_small_scriptable",
+        arch_name="vit_small",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -148,7 +148,7 @@ def dinov2_vitb14_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-B/14 backbone (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_base_scriptable",
+        arch_name="vit_base",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -167,7 +167,7 @@ def dinov2_vitl14_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-L/14 backbone (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_large_scriptable",
+        arch_name="vit_large",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -186,7 +186,7 @@ def dinov2_vitg14_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-g/14 backbone (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_giant2_scriptable",
+        arch_name="vit_giant2",
         layers=layers,
         ffn_layer="swiglufused",
         pretrained=pretrained,
@@ -202,7 +202,7 @@ def dinov2_vits14_reg_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-S/14 backbone with registers (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_small_scriptable",
+        arch_name="vit_small",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -220,7 +220,7 @@ def dinov2_vitb14_reg_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-B/14 backbone with registers (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_base_scriptable",
+        arch_name="vit_base",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -238,7 +238,7 @@ def dinov2_vitl14_reg_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-L/14 backbone with registers (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_large_scriptable",
+        arch_name="vit_large",
         layers=layers,
         pretrained=pretrained,
         weights=weights,
@@ -256,7 +256,7 @@ def dinov2_vitg14_reg_lc_scriptable(
     Linear classifier (1 or 4 layers) on top of a DINOv2 ViT-g/14 backbone with registers (optionally) pretrained on the LVD-142M dataset and trained on ImageNet-1k.
     """
     return _make_dinov2_linear_classifier(
-        arch_name="vit_giant2_scriptable",
+        arch_name="vit_giant2",
         layers=layers,
         ffn_layer="swiglufused",
         pretrained=pretrained,
