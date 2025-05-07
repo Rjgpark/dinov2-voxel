@@ -76,14 +76,12 @@ class Block(nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         if self.training and self.sample_drop_ratio > 0.1:
             # the overhead is compensated only for a drop path rate larger than 0.1
-            x = drop_add_residual_stochastic_depth(
+            x = self.drop_add_attn_residual_stochastic_depth(
                 x,
-                residual_func=self._attn_residual,
                 sample_drop_ratio=self.sample_drop_ratio,
             )
-            x = drop_add_residual_stochastic_depth(
+            x = self.drop_add_ffn_residual_stochastic_depth(
                 x,
-                residual_func=self._ffn_residual,
                 sample_drop_ratio=self.sample_drop_ratio,
             )
         elif self.training and self.sample_drop_ratio > 0.0:
@@ -94,29 +92,51 @@ class Block(nn.Module):
             x = x + self._ffn_residual(x)
         return x
 
+    def drop_add_attn_residual_stochastic_depth(
+        self,
+        x: Tensor,
+        sample_drop_ratio: float = 0.0,
+    ) -> Tensor:
+        # 1) extract subset using permutation
+        b, n, d = x.shape
+        sample_subset_size = max(int(b * (1 - sample_drop_ratio)), 1)
+        brange = (torch.randperm(b, device=x.device))[:sample_subset_size]
+        x_subset = x[brange]
 
-def drop_add_residual_stochastic_depth(
-    x: Tensor,
-    residual_func: Callable[[Tensor], Tensor],
-    sample_drop_ratio: float = 0.0,
-) -> Tensor:
-    # 1) extract subset using permutation
-    b, n, d = x.shape
-    sample_subset_size = max(int(b * (1 - sample_drop_ratio)), 1)
-    brange = (torch.randperm(b, device=x.device))[:sample_subset_size]
-    x_subset = x[brange]
+        # 2) apply residual_func to get residual
+        residual = self._attn_residual(x_subset)
 
-    # 2) apply residual_func to get residual
-    residual = residual_func(x_subset)
+        x_flat = x.flatten(1)
+        residual = residual.flatten(1)
 
-    x_flat = x.flatten(1)
-    residual = residual.flatten(1)
+        residual_scale_factor = b / sample_subset_size
 
-    residual_scale_factor = b / sample_subset_size
+        # 3) add the residual
+        x_plus_residual = torch.index_add(x_flat, 0, brange, residual.to(dtype=x.dtype), alpha=residual_scale_factor)
+        return x_plus_residual.view_as(x)
 
-    # 3) add the residual
-    x_plus_residual = torch.index_add(x_flat, 0, brange, residual.to(dtype=x.dtype), alpha=residual_scale_factor)
-    return x_plus_residual.view_as(x)
+    def drop_add_ffn_residual_stochastic_depth(
+        self,
+        x: Tensor,
+        sample_drop_ratio: float = 0.0,
+    ) -> Tensor:
+        # 1) extract subset using permutation
+        b, n, d = x.shape
+        sample_subset_size = max(int(b * (1 - sample_drop_ratio)), 1)
+        brange = (torch.randperm(b, device=x.device))[:sample_subset_size]
+        x_subset = x[brange]
+
+        # 2) apply residual_func to get residual
+        residual = self._ffn_residual(x_subset)
+
+        x_flat = x.flatten(1)
+        residual = residual.flatten(1)
+
+        residual_scale_factor = b / sample_subset_size
+
+        # 3) add the residual
+        x_plus_residual = torch.index_add(x_flat, 0, brange, residual.to(dtype=x.dtype), alpha=residual_scale_factor)
+        return x_plus_residual.view_as(x)
 
 
 def get_branges_scales(x, sample_drop_ratio=0.0):
