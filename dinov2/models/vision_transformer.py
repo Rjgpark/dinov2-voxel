@@ -10,7 +10,7 @@
 from functools import partial
 import math
 import logging
-from typing import Sequence, Tuple, Union, Callable
+from typing import Sequence, Tuple, Union, Callable, Any
 
 import torch
 import torch.nn as nn
@@ -189,24 +189,26 @@ class DinoVisionTransformer(nn.Module):
         h0 = h // self.patch_size
         M = int(math.sqrt(N))  # Recover the number of patches in each dimension
         assert N == M * M
-        scale_factor = None
-        size = None
         if self.interpolate_offset:
             # Historical kludge: add a small number to avoid floating point error in the interpolation, see https://github.com/facebookresearch/dino/issues/8
             # Note: still needed for backward-compatibility, the underlying operators are using both output size and scale factors
             sx = float(w0 + self.interpolate_offset) / M
             sy = float(h0 + self.interpolate_offset) / M
-            scale_factor = (sx, sy)
+            patch_pos_embed = nn.functional.interpolate(
+                patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
+                mode="bicubic",
+                antialias=self.interpolate_antialias,
+                scale_factor=(sx, sy),
+            )
         else:
             # Simply specify an output size instead of a scale factor
-            size = (w0, h0)
-        patch_pos_embed = nn.functional.interpolate(
-            patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
-            mode="bicubic",
-            antialias=self.interpolate_antialias,
-            scale_factor=scale_factor,
-            size=size,
-        )
+            patch_pos_embed = nn.functional.interpolate(
+                patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
+                mode="bicubic",
+                antialias=self.interpolate_antialias,
+                size=(w0, h0),
+            )
+
         assert (w0, h0) == patch_pos_embed.shape[-2:]
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
         return torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1).to(previous_dtype)
