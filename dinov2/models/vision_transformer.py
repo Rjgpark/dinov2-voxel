@@ -202,8 +202,15 @@ class DinoVisionTransformer(nn.Module):
                 scale_factor=(sx, sy),
             )
         else:
-            w0_int = int(w0.item()) if torch.is_tensor(w0) else int(w0)
-            h0_int = int(h0.item()) if torch.is_tensor(h0) else int(h0)
+            if isinstance(w0, torch.Tensor):
+                w0_int = int(w0.item())
+            else:
+                w0_int = int(w0)
+
+            if isinstance(h0, torch.Tensor):
+                h0_int = int(h0.item())
+            else:
+                h0_int = int(h0)
 
             patch_pos_embed = nn.functional.interpolate(
                 patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
