@@ -187,6 +187,7 @@ class DinoVisionTransformer(nn.Module):
         dim = x.shape[-1]
         w0 = w // self.patch_size
         h0 = h // self.patch_size
+
         M = int(math.sqrt(N))  # Recover the number of patches in each dimension
         assert N == M * M
         if self.interpolate_offset:
@@ -201,12 +202,14 @@ class DinoVisionTransformer(nn.Module):
                 scale_factor=(sx, sy),
             )
         else:
-            # Simply specify an output size instead of a scale factor
+            w0_int = int(w0.item()) if torch.is_tensor(w0) else int(w0)
+            h0_int = int(h0.item()) if torch.is_tensor(h0) else int(h0)
+
             patch_pos_embed = nn.functional.interpolate(
                 patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
                 mode="bicubic",
                 antialias=self.interpolate_antialias,
-                size=(w0, h0),
+                size=(w0_int, h0_int),
             )
 
         assert (w0, h0) == patch_pos_embed.shape[-2:]
