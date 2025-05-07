@@ -64,35 +64,34 @@ class Block(nn.Module):
             bias=ffn_bias,
         )
         self.ls2 = LayerScale(dim, init_values=init_values) if init_values else nn.Identity()
-        self.drop_path2 = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
 
         self.sample_drop_ratio = drop_path
 
+    def _attn_residual(self, x: Tensor) -> Tensor:
+        return self.ls1(self.attn(self.norm1(x)))
+
+    def _ffn_residual(self, x: Tensor) -> Tensor:
+        return self.ls2(self.mlp(self.norm2(x)))
+
     def forward(self, x: Tensor) -> Tensor:
-        def attn_residual_func(x: Tensor) -> Tensor:
-            return self.ls1(self.attn(self.norm1(x)))
-
-        def ffn_residual_func(x: Tensor) -> Tensor:
-            return self.ls2(self.mlp(self.norm2(x)))
-
         if self.training and self.sample_drop_ratio > 0.1:
             # the overhead is compensated only for a drop path rate larger than 0.1
             x = drop_add_residual_stochastic_depth(
                 x,
-                residual_func=attn_residual_func,
+                residual_func=self._attn_residual,
                 sample_drop_ratio=self.sample_drop_ratio,
             )
             x = drop_add_residual_stochastic_depth(
                 x,
-                residual_func=ffn_residual_func,
+                residual_func=self._ffn_residual,
                 sample_drop_ratio=self.sample_drop_ratio,
             )
         elif self.training and self.sample_drop_ratio > 0.0:
-            x = x + self.drop_path1(attn_residual_func(x))
-            x = x + self.drop_path1(ffn_residual_func(x))  # FIXME: drop_path2
+            x = x + self.drop_path1(self._attn_residual(x))
+            x = x + self.drop_path1(self._ffn_residual(x))
         else:
-            x = x + attn_residual_func(x)
-            x = x + ffn_residual_func(x)
+            x = x + self._attn_residual(x)
+            x = x + self._ffn_residual(x)
         return x
 
 
