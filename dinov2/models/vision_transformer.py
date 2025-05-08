@@ -175,7 +175,12 @@ class DinoVisionTransformer(nn.Module):
             nn.init.normal_(self.register_tokens, std=1e-6)
         named_apply(init_weights_vit_timm, self)
 
-    def interpolate_pos_encoding(self, x, w, h):
+    def interpolate_pos_encoding(
+        self,
+        x: torch.Tensor,
+        w: int,
+        h: int,
+    ) -> torch.Tensor:
         previous_dtype = x.dtype
         npatch = x.shape[1] - 1
         N = self.pos_embed.shape[1] - 1
@@ -202,21 +207,11 @@ class DinoVisionTransformer(nn.Module):
                 scale_factor=(sx, sy),
             )
         else:
-            if isinstance(w0, torch.Tensor):
-                w0_int = int(w0.item())
-            else:
-                w0_int = int(w0)
-
-            if isinstance(h0, torch.Tensor):
-                h0_int = int(h0.item())
-            else:
-                h0_int = int(h0)
-
             patch_pos_embed = nn.functional.interpolate(
                 patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2),
                 mode="bicubic",
                 antialias=self.interpolate_antialias,
-                size=(w0_int, h0_int),
+                size=(w0, h0),
             )
 
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
