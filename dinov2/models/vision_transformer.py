@@ -10,7 +10,7 @@
 from functools import partial
 import math
 import logging
-from typing import Sequence, Tuple, Union, Callable
+from typing import Sequence, Tuple, Union, Callable, Optional
 
 import torch
 import torch.nn as nn
@@ -217,7 +217,8 @@ class DinoVisionTransformer(nn.Module):
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
         return torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1).to(previous_dtype)
 
-    def prepare_tokens_with_masks(self, x, masks=None):
+    @torch.jit.export
+    def prepare_tokens_with_masks(self, x, masks: Optional[torch.Tensor] = None):
         B, nc, w, h = x.shape
         x = self.patch_embed(x)
         if masks is not None:
@@ -258,7 +259,8 @@ class DinoVisionTransformer(nn.Module):
             )
         return output
 
-    def forward_features(self, x, masks=None):
+    @torch.jit.export
+    def forward_features(self, x, masks: Optional[torch.Tensor] = None):
         if isinstance(x, list):
             return self.forward_features_list(x, masks)
 
@@ -328,7 +330,8 @@ class DinoVisionTransformer(nn.Module):
             return tuple(zip(outputs, class_tokens))
         return tuple(outputs)
 
-    def forward(self, x, masks=None):
+    @torch.jit.export
+    def forward(self, x, masks: Optional[torch.Tensor] = None):
         return self.forward_features(x, masks)
 
 
